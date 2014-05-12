@@ -1,5 +1,8 @@
-![Magento js file minified](http://i.imgur.com/w9NdG.png)
-## Introduction
+# WBL_Minify
+
+Zookal Version works only with Java/YUICompressor or old JSMin.
+
+Maybe later a cURL API call to Googles Closure Compiler service: [http://closure-compiler.appspot.com/home](http://closure-compiler.appspot.com/home)
 
 WBL_Minify extension enables minification of magento css merged files and/or  javascript merged files.
 You can choose to use YUICompressor (included). In that case, be sure to have Java installed on your server and MAGE_ROOT_DIR/lib/YUICompressor.(-version-).jar executable.
@@ -22,48 +25,17 @@ No cache proxy server, or anything complicated : the simple genuine js and css m
 
 ## Installation
 
-### Install with [modgit](https://github.com/jreinke/modgit):
-
-```bash
-$ cd /path/to/magento
-$ modgit init
-$ modgit -e README.md clone magento-minify git://github.com/azurams/Magento-Minify.git
-```
-
-### Install with modman:
-```bash
-$ cd /path/to/magento
-$ modman init
-$ modman clone WBL_Minify git://github.com/azurams/Magento-Minify.git
-```
+Use modman or composer please.
 
 ### Download package manually:
 
-* Download latest version [here](https://github.com/azurams/Magento-Minify/archive/master.zip)
+* Download latest version [here](https://github.com)
 * Unzip in Magento root folder
 * Clean cache
 
 Log-out then Log-in in magento backend, go to System > Configuration > Developer > Minification Settings.
 Then flush media/js and media/css files... and that's it !
 
-## *NEW* LESS support
-
-[LESS: The dynamic stylesheet language.](http://lesscss.org/)
-
-Ability to compile less files with [lessphp](http://leafo.net/lessphp/) and adds the less.js if
-merging is disabled.
-
-Adding a .less file to your scripts is easy:
-
-```xml
-<layout>
-    <default>
-        <reference name="head">
-            <action method="addItem"><type>skin_css</type><stylesheet>less/responsive.less</stylesheet></action>
-        </reference>
-    </default>
-</layout>
-```
 
 ## *NEW* Grouping files functionality
 
@@ -81,7 +53,7 @@ relevant groups (the product page gets its own group for example). More examples
 	<!-- we add a group specifically for each locale, when customers are switching a language the whole css doesn't need to be reloaded -->
     <default>
         <reference name="head">
-            <action method="addItem"><type>skin_css</type><stylesheet>less/responsive.less</stylesheet><params/><if/><cond/><group>locale</group></action>
+            <action method="addItem"><type>skin_css</type><stylesheet>css/responsive.css</stylesheet><params/><if/><cond/><group>locale</group></action>
             <!-- not the the <params/>, <if/> and the <cond/>, those are required. -->
         </reference>
     </default>
@@ -98,4 +70,4 @@ relevant groups (the product page gets its own group for example). More examples
 
 ## License
 
-???
+OSL-3.0

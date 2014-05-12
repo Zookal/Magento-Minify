@@ -3,11 +3,17 @@
     <sections>
         <dev>
             <groups>
-                <js>
+                <minification>
+                    <label>Minify Settings</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1000</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
                     <fields>
                         <enable_yuicompressor translate="label">
                             <label>Enable YUICompress</label>
-                            <comment>this allows better minifications results. (requires Java)</comment>
+                            <comment>(requires Java)</comment>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <sort_order>30</sort_order>
@@ -15,38 +21,19 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </enable_yuicompressor>
-
-                    </fields>
-                </js>
-                <css>
-                    <fields>
-                        <lessjs translate="label">
-                            <label>Include less.js</label>
-                            <comment><![CDATA[When <strong style="color:red;">merging</strong>
-                                isn't enabled, .less files wont be compiled to css and less.js is
-                                required for proper rendering.<br />
-                                When enable merging, please disable this.
-                            ]]></comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                        <version_config_path>
+                            <label>Store version config path</label>
+                            <comment>Path to the config setting which holds the current release version of the store. This is not the Magento
+                                version! If you don't have such a path then enter here the version.
+                            </comment>
+                            <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </lessjs>
-                        <lessjs_watch translate="label">
-                            <label>Enable less.js watch mode</label>
-                            <comment><![CDATA[Less.js watches for file changes and updates the browser without refreshing. <strong style="color:red;">Can cause performance issues</strong>
-                            ]]></comment>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>50</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </lessjs_watch>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </version_config_path>
                     </fields>
-                </css>
+                </minification>
             </groups>
         </dev>
     </sections>

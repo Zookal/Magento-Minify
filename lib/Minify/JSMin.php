@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JSMin.php - modified PHP implementation of Douglas Crockford's JSMin.
  *
@@ -44,31 +45,35 @@
  * SOFTWARE.
  * --
  *
- * @package JSMin
- * @author Ryan Grove <ryan@wonko.com> (PHP port)
- * @author Steve Clay <steve@mrclay.org> (modifications + cleanup)
- * @author Andrea Giammarchi <http://www.3site.eu> (spaceBeforeRegExp)
+ * @package   JSMin
+ * @author    Ryan Grove <ryan@wonko.com> (PHP port)
+ * @author    Steve Clay <steve@mrclay.org> (modifications + cleanup)
+ * @author    Andrea Giammarchi <http://www.3site.eu> (spaceBeforeRegExp)
  * @copyright 2002 Douglas Crockford <douglas@crockford.com> (jsmin.c)
  * @copyright 2008 Ryan Grove <ryan@wonko.com> (PHP port)
- * @license http://opensource.org/licenses/mit-license.php MIT License
- * @link http://code.google.com/p/jsmin-php/
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ * @link      http://code.google.com/p/jsmin-php/
  */
+class Minify_JSMin
+{
+    /**
+     * refactor and use https://github.com/tedivm/JShrink
+     */
 
-class Minify_JSMin {
     const ORD_LF            = 10;
     const ORD_SPACE         = 32;
     const ACTION_KEEP_A     = 1;
     const ACTION_DELETE_A   = 2;
     const ACTION_DELETE_A_B = 3;
 
-    protected $a           = "\n";
-    protected $b           = '';
-    protected $input       = '';
-    protected $inputIndex  = 0;
+    protected $a = "\n";
+    protected $b = '';
+    protected $input = '';
+    protected $inputIndex = 0;
     protected $inputLength = 0;
-    protected $lookAhead   = null;
-    protected $output      = '';
-    protected $lastByteOut  = '';
+    protected $lookAhead = null;
+    protected $output = '';
+    protected $lastByteOut = '';
 
     /**
      * Minify Javascript.
@@ -107,7 +112,7 @@ class Minify_JSMin {
             $mbIntEnc = mb_internal_encoding();
             mb_internal_encoding('8bit');
         }
-        $this->input = str_replace("\r\n", "\n", $this->input);
+        $this->input       = str_replace("\r\n", "\n", $this->input);
         $this->inputLength = strlen($this->input);
 
         $this->action(self::ACTION_DELETE_A_B);
@@ -117,26 +122,29 @@ class Minify_JSMin {
             $command = self::ACTION_KEEP_A; // default
             if ($this->a === ' ') {
                 if (($this->lastByteOut === '+' || $this->lastByteOut === '-')
-                    && ($this->b === $this->lastByteOut)) {
+                    && ($this->b === $this->lastByteOut)
+                ) {
                     // Don't delete this space. If we do, the addition/subtraction
                     // could be parsed as a post-increment
-                } elseif (! $this->isAlphaNum($this->b)) {
+                } elseif (!$this->isAlphaNum($this->b)) {
                     $command = self::ACTION_DELETE_A;
                 }
             } elseif ($this->a === "\n") {
                 if ($this->b === ' ') {
                     $command = self::ACTION_DELETE_A_B;
-                // in case of mbstring.func_overload & 2, must check for null b,
-                // otherwise mb_strpos will give WARNING
+                    // in case of mbstring.func_overload & 2, must check for null b,
+                    // otherwise mb_strpos will give WARNING
                 } elseif ($this->b === null
-                          || (false === strpos('{[(+-', $this->b)
-                              && ! $this->isAlphaNum($this->b))) {
+                    || (false === strpos('{[(+-', $this->b)
+                        && !$this->isAlphaNum($this->b))
+                ) {
                     $command = self::ACTION_DELETE_A;
                 }
-            } elseif (! $this->isAlphaNum($this->a)) {
+            } elseif (!$this->isAlphaNum($this->a)) {
                 if ($this->b === ' '
                     || ($this->b === "\n"
-                        && (false === strpos('}])+-"\'', $this->a)))) {
+                        && (false === strpos('}])+-"\'', $this->a)))
+                ) {
                     $command = self::ACTION_DELETE_A_B;
                 }
             }
@@ -156,13 +164,15 @@ class Minify_JSMin {
      * ACTION_DELETE_A_B = Get the next B.
      *
      * @param int $command
+     *
      * @throws JSMin_UnterminatedRegExpException|JSMin_UnterminatedStringException
      */
     protected function action($command)
     {
         if ($command === self::ACTION_DELETE_A_B
             && $this->b === ' '
-            && ($this->a === '+' || $this->a === '-')) {
+            && ($this->a === '+' || $this->a === '-')
+        ) {
             // Note: we're at an addition/substraction operator; the inputIndex
             // will certainly be a valid index
             if ($this->input[$this->inputIndex] === $this->a) {
@@ -175,7 +185,7 @@ class Minify_JSMin {
                 $this->output .= $this->a;
                 $this->lastByteOut = $this->a;
 
-                // fallthrough
+            // fallthrough
             case self::ACTION_DELETE_A:
                 $this->a = $this->b;
                 if ($this->a === "'" || $this->a === '"') { // string literal
@@ -184,7 +194,7 @@ class Minify_JSMin {
                         $this->output .= $this->a;
                         $this->lastByteOut = $this->a;
 
-                        $this->a       = $this->get();
+                        $this->a = $this->get();
                         if ($this->a === $this->b) { // end quote
                             break;
                         }
@@ -198,12 +208,12 @@ class Minify_JSMin {
                             $this->output .= $this->a;
                             $this->lastByteOut = $this->a;
 
-                            $this->a       = $this->get();
+                            $this->a = $this->get();
                             $str .= $this->a;
                         }
                     }
                 }
-                // fallthrough
+            // fallthrough
             case self::ACTION_DELETE_A_B:
                 $this->b = $this->next();
                 if ($this->b === '/' && $this->isRegexpLiteral()) { // RegExp literal
@@ -216,12 +226,12 @@ class Minify_JSMin {
                             break; // while (true)
                         } elseif ($this->a === '\\') {
                             $this->output .= $this->a;
-                            $this->a       = $this->get();
-                            $pattern      .= $this->a;
+                            $this->a = $this->get();
+                            $pattern .= $this->a;
                         } elseif (ord($this->a) <= self::ORD_LF) {
                             throw new JSMin_UnterminatedRegExpException(
                                 "JSMin: Unterminated RegExp at byte "
-                                . $this->inputIndex .": {$pattern}");
+                                . $this->inputIndex . ": {$pattern}");
                         }
                         $this->output .= $this->a;
                         $this->lastByteOut = $this->a;
@@ -252,7 +262,7 @@ class Minify_JSMin {
                 }
                 // make sure it's a keyword, not end of an identifier
                 $charBeforeKeyword = substr($this->output, $length - strlen($m[0]) - 1, 1);
-                if (! $this->isAlphaNum($charBeforeKeyword)) {
+                if (!$this->isAlphaNum($charBeforeKeyword)) {
                     return true;
                 }
             }
@@ -267,7 +277,7 @@ class Minify_JSMin {
      */
     protected function get()
     {
-        $c = $this->lookAhead;
+        $c               = $this->lookAhead;
         $this->lookAhead = null;
         if ($c === null) {
             if ($this->inputIndex < $this->inputLength) {
@@ -373,13 +383,24 @@ class Minify_JSMin {
             return $get;
         }
         switch ($this->peek()) {
-            case '/': return $this->singleLineComment();
-            case '*': return $this->multipleLineComment();
-            default: return $get;
+            case '/':
+                return $this->singleLineComment();
+            case '*':
+                return $this->multipleLineComment();
+            default:
+                return $get;
         }
     }
 }
 
-class JSMin_UnterminatedStringException extends Exception {}
-class JSMin_UnterminatedCommentException extends Exception {}
-class JSMin_UnterminatedRegExpException extends Exception {}
+class JSMin_UnterminatedStringException extends Exception
+{
+}
+
+class JSMin_UnterminatedCommentException extends Exception
+{
+}
+
+class JSMin_UnterminatedRegExpException extends Exception
+{
+}

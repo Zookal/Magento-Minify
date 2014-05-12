@@ -1,5 +1,5 @@
 {
-    "name": "wbl/magento-minify",
+    "name": "zookal/magento-minify",
     "license": "OSL-3.0",
     "type": "magento-module",
     "description": "Simply enables js and css minification.",
@@ -11,6 +11,10 @@
         {
             "name": "William Blanc Dit Jolicoeur",
             "email": "william.blanc@gmail.com"
+        },
+        {
+            "name": "Cyrill Schumacher",
+            "email": "cyrill+magento@schumacher.fm"
         }
     ]
 }
