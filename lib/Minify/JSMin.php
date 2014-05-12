@@ -56,6 +56,10 @@
  */
 class Minify_JSMin
 {
+    /**
+     * refactor and use https://github.com/tedivm/JShrink
+     */
+
     const ORD_LF            = 10;
     const ORD_SPACE         = 32;
     const ACTION_KEEP_A     = 1;

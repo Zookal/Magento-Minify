@@ -162,7 +162,7 @@ class Minify_YUICompressor
             throw new Exception('Minify_YUICompressor : $jarFile(' . self::$jarFile . ') is not a valid link.');
         }
         if (!is_dir(self::$tempDir)) {
-            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$tempDir . ') is not a valid direcotry.');
+            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$tempDir . ') is not a valid directory.');
         }
         if (!is_writable(self::$tempDir)) {
             throw new Exception('Minify_YUICompressor : $tempDir(' . self::$tempDir . ') is not writable.');

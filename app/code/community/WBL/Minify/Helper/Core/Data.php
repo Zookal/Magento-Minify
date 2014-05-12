@@ -5,6 +5,11 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
     const XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR = 'dev/minification/enable_yuicompressor';
     const XML_PATH_MINIFY_VERSION_PATH         = 'dev/minification/version_config_path';
 
+    public function __construct()
+    {
+        $this->_initYUICompressor();
+    }
+
     /**
      * @return bool
      */
@@ -14,15 +19,29 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
     }
 
     /**
-     * @return string
+     * @param $directorySeparator
+     *
+     * @return int|string
      */
-    public function getStoreReleaseVersion()
+    public function getStoreReleaseVersion($directorySeparator = null)
     {
-        $configVersionPath = trim(Mage::getStoreConfig(self::XML_PATH_MINIFY_VERSION_PATH));
-        if (empty($configVersionPath) || false === strpos($configVersionPath, '/')) {
-            return $this->getStoreId();
+        $directorySeparator = null === $directorySeparator ? DS : $directorySeparator;
+        $configVersionPath  = trim(Mage::getStoreConfig(self::XML_PATH_MINIFY_VERSION_PATH));
+        if (false === strpos($configVersionPath, '/')) {
+            return (empty($configVersionPath) ? '' : $configVersionPath . $directorySeparator) . $this->getStoreId();
         }
-        return $this->getStoreId() . DS . Mage::getStoreConfig($configVersionPath);
+        return Mage::getStoreConfig($configVersionPath) . $directorySeparator . $this->getStoreId();
+    }
+
+    /**
+     *
+     */
+    protected function _initYUICompressor()
+    {
+        if ($this->isYUICompressEnabled()) {
+            Minify_YUICompressor::$jarFile = Mage::getBaseDir() . DS . 'lib' . DS . 'yuicompressor' . DS . 'yuicompressor.jar';
+            Minify_YUICompressor::$tempDir = realpath(sys_get_temp_dir());
+        }
     }
 
     /**
@@ -33,11 +52,6 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
      */
     public function minifyJsCss($data, $fileName)
     {
-
-        if ($this->isYUICompressEnabled()) {
-            Minify_YUICompressor::$jarFile = Mage::getBaseDir() . DS . 'lib' . DS . 'yuicompressor' . DS . 'yuicompressor.jar';
-            Minify_YUICompressor::$tempDir = realpath(sys_get_temp_dir());
-        }
         $YUICompressorFailed = false;
         switch (pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'js':
@@ -53,7 +67,9 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         $YUICompressorFailed = true;
                     }
                 }
-
+                /**
+                 * refactor and use https://github.com/tedivm/JShrink
+                 */
                 if (!$this->isYUICompressEnabled() || $YUICompressorFailed === true) {
                     Varien_Profiler::start('Minify_JSMin::minify');
                     $data = Minify_JSMin::minify($data);
@@ -123,10 +139,6 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                 } else {
                     $targetMtime = filemtime($targetFile);
                     foreach ($srcFiles as $file) {
-                        if (!is_file($file)) {
-                            throw new Exception(sprintf('File %s is not a file, probably the file doesn\'t exist.', $file));
-                        }
-
                         if (!file_exists($file) || @filemtime($file) > $targetMtime) {
                             $shouldMerge = true;
                             break;
