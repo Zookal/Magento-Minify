@@ -39,8 +39,8 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
     protected function _initYUICompressor()
     {
         if ($this->isYUICompressEnabled()) {
-            Minify_YUICompressor::$jarFile = Mage::getBaseDir() . DS . 'lib' . DS . 'yuicompressor' . DS . 'yuicompressor.jar';
-            Minify_YUICompressor::$tempDir = realpath(sys_get_temp_dir());
+            Minify_YUICompressor::setBaseDir(Mage::getBaseDir());
+            Minify_YUICompressor::setTempDir();
         }
     }
 

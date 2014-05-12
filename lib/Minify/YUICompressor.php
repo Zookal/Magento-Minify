@@ -35,7 +35,7 @@ class Minify_YUICompressor
      *
      * @var string
      */
-    public static $jarFile = null;
+    protected static $_jarFile = null;
 
     /**
      * Writable temp directory. This must be set before calling minifyJs()
@@ -43,7 +43,7 @@ class Minify_YUICompressor
      *
      * @var string
      */
-    public static $tempDir = null;
+    protected static $_tempDir = null;
 
     /**
      * Filepath of "java" executable (may be needed if not in shell's PATH)
@@ -58,6 +58,30 @@ class Minify_YUICompressor
      * @var string
      */
     public static $yuiCommand = '';
+
+    /**
+     * @param string $tempDir
+     */
+    public static function setTempDir($tempDir = null)
+    {
+        self::$_tempDir = null === $tempDir ? realpath(sys_get_temp_dir()) : $tempDir;
+    }
+
+    /**
+     * @param string $baseDir
+     */
+    public static function setBaseDir($baseDir)
+    {
+        self::$_jarFile = $baseDir . DS . 'lib' . DS . 'yuicompressor' . DS . 'yuicompressor.jar';
+    }
+
+    /**
+     * @return string
+     */
+    public static function getJarFile()
+    {
+        return self::$_jarFile;
+    }
 
     /**
      * Minify a Javascript string
@@ -102,7 +126,7 @@ class Minify_YUICompressor
     protected static function _minify($type, $content, $options)
     {
         self::_prepare();
-        if (!($tmpFile = tempnam(self::$tempDir, 'yuic_'))) {
+        if (!($tmpFile = tempnam(self::$_tempDir, 'yuic_'))) {
             throw new Exception('Minify_YUICompressor : could not create temp file.');
         }
         file_put_contents($tmpFile, $content);
@@ -138,7 +162,7 @@ class Minify_YUICompressor
             )
             , $userOptions
         );
-        $cmd = self::$javaExecutable . ' -jar ' . escapeshellarg(self::$jarFile)
+        $cmd = self::$javaExecutable . ' -jar ' . escapeshellarg(self::$_jarFile)
             . ' --type ' . $type
             . (preg_match('/^[\\da-zA-Z0-9\\-]+$/', $o['charset'])
                 ? " --charset {$o['charset']}"
@@ -158,14 +182,14 @@ class Minify_YUICompressor
 
     protected static function _prepare()
     {
-        if (!is_link(self::$jarFile)) {
-            throw new Exception('Minify_YUICompressor : $jarFile(' . self::$jarFile . ') is not a valid link.');
+        if (!is_link(self::$_jarFile)) {
+            throw new Exception('Minify_YUICompressor : $jarFile(' . self::$_jarFile . ') is not a valid link.');
         }
-        if (!is_dir(self::$tempDir)) {
-            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$tempDir . ') is not a valid directory.');
+        if (!is_dir(self::$_tempDir)) {
+            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$_tempDir . ') is not a valid directory.');
         }
-        if (!is_writable(self::$tempDir)) {
-            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$tempDir . ') is not writable.');
+        if (!is_writable(self::$_tempDir)) {
+            throw new Exception('Minify_YUICompressor : $tempDir(' . self::$_tempDir . ') is not writable.');
         }
     }
 }
