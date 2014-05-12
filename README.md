@@ -1,8 +1,16 @@
 # WBL_Minify
 
-Zookal Version works only with Java/YUICompressor or old JSMin.
+- Zookal Version works only with Java/YUICompressor or old JSMin.
+- Create versioned directories
+- Less feature removed as not necessary
+- Code optimized
 
-Maybe later a cURL API call to Googles Closure Compiler service: [http://closure-compiler.appspot.com/home](http://closure-compiler.appspot.com/home)
+#### @todo
+
+- Maybe later a cURL API call to Googles Closure Compiler service: [http://closure-compiler.appspot.com/home](http://closure-compiler.appspot.com/home)
+- use JShrink instead of JSMin as JSMin is deprecated
+- Maybe only use Java or API call to Google because these libs generate the smallest optimized JavaScript.
+- Add Node.js uglify
 
 WBL_Minify extension enables minification of magento css merged files and/or  javascript merged files.
 You can choose to use YUICompressor (included). In that case, be sure to have Java installed on your server and MAGE_ROOT_DIR/lib/YUICompressor.(-version-).jar executable.
