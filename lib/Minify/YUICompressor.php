@@ -1,7 +1,9 @@
 <?php
 /**
- * Class Minify_YUICompressor
- * @package Minify
+ * @category    WBL_Minify
+ * @package     Minify
+ * @copyright   Copyright (c)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**

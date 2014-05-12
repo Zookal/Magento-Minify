@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @category    WBL_Minify
+ * @package     Minify
+ * @copyright   Copyright (c)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
 class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
 {
 

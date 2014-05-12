@@ -1,6 +1,6 @@
 # WBL_Minify
 
-Zookal Version without JavaScript, works only with Java/YUICompressor.
+Zookal Version works only with Java/YUICompressor or old JSMin.
 
 Maybe later a cURL API call to Googles Closure Compiler service: [http://closure-compiler.appspot.com/home](http://closure-compiler.appspot.com/home)
 
@@ -25,20 +25,7 @@ No cache proxy server, or anything complicated : the simple genuine js and css m
 
 ## Installation
 
-### Install with [modgit](https://github.com/jreinke/modgit):
-
-```bash
-$ cd /path/to/magento
-$ modgit init
-$ modgit -e README.md clone magento-minify git://github.com/azurams/Magento-Minify.git
-```
-
-### Install with modman:
-```bash
-$ cd /path/to/magento
-$ modman init
-$ modman clone WBL_Minify git://github.com/azurams/Magento-Minify.git
-```
+Use modman or composer please.
 
 ### Download package manually:
 
