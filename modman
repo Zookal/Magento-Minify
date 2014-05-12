@@ -1,4 +1,3 @@
 app/code/community/WBL/*                  app/code/community/WBL/
 app/etc/modules/*                         app/etc/modules/
 lib/*                                     lib/
-js/*                                      js/
