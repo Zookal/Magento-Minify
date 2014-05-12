@@ -2,7 +2,7 @@
 <config>
     <modules>
         <WBL_Minify>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
         </WBL_Minify>
     </modules>
     <global>
@@ -16,6 +16,16 @@
                 </rewrite>
             </core>
         </helpers>
+        <models>
+            <wbl_minify>
+                <class>WBL_Minify_Model</class>
+            </wbl_minify>
+            <core>
+                <rewrite>
+                    <design_package>WBL_Minify_Model_Design_Package</design_package>
+                </rewrite>
+            </core>
+        </models>
         <blocks>
             <page>
                 <rewrite>
@@ -24,20 +34,4 @@
             </page>
         </blocks>
     </global>
-    <frontend>
-        <layout>
-            <updates>
-                <wbl_minify module="wbl_minify">
-                    <file>wbl_minify.xml</file>
-                </wbl_minify>
-            </updates>
-        </layout>
-    </frontend>
-    <default>
-   		<dev>
-   			<css>
-   				<lessjs>1</lessjs>
-   			</css>
-   		</dev>
-   	</default>
 </config>

@@ -2,9 +2,8 @@
 
 class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
 {
-    const XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR  = 'dev/js/enable_yuicompressor';
-
-    protected $_lessphp = null;
+    const XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR = 'dev/minification/enable_yuicompressor';
+    const XML_PATH_MINIFY_VERSION_PATH         = 'dev/minification/version_config_path';
 
     /**
      * @return bool
@@ -14,22 +13,33 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
         return Mage::getStoreConfigFlag(self::XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR);
     }
 
+    /**
+     * @return string
+     */
+    public function getStoreReleaseVersion()
+    {
+        $configVersionPath = trim(Mage::getStoreConfig(self::XML_PATH_MINIFY_VERSION_PATH));
+        if (empty($configVersionPath) || false === strpos($configVersionPath, '/')) {
+            return $this->getStoreId();
+        }
+        return $this->getStoreId() . DS . Mage::getStoreConfig($configVersionPath);
+    }
 
     /**
      * @param string $data
-     * @param string $target
+     * @param string $fileName
      *
      * @return string
      */
-    public function minifyJsCss($data,$target)
+    public function minifyJsCss($data, $fileName)
     {
 
         if ($this->isYUICompressEnabled()) {
-            Minify_YUICompressor::$jarFile = Mage::getBaseDir().DS.'lib'.DS.'yuicompressor'.DS.'yuicompressor.jar';
+            Minify_YUICompressor::$jarFile = Mage::getBaseDir() . DS . 'lib' . DS . 'yuicompressor' . DS . 'yuicompressor.jar';
             Minify_YUICompressor::$tempDir = realpath(sys_get_temp_dir());
         }
         $YUICompressorFailed = false;
-        switch (pathinfo($target, PATHINFO_EXTENSION)) {
+        switch (pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'js':
                 if ($this->isYUICompressEnabled()) {
                     try {
@@ -37,7 +47,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         $data = Minify_YUICompressor::minifyJs($data);
                         Varien_Profiler::stop('Minify_YUICompressor::minifyJs');
                         $YUICompressorFailed = false;
-                    } catch(Exception $e) {
+                    } catch (Exception $e) {
                         Mage::log(Minify_YUICompressor::$yuiCommand);
                         Mage::logException($e);
                         $YUICompressorFailed = true;
@@ -49,7 +59,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                     $data = Minify_JSMin::minify($data);
                     Varien_Profiler::stop('Minify_JSMin::minify');
                 }
-            break;
+                break;
 
             case 'css':
                 if ($this->isYUICompressEnabled()) {
@@ -58,7 +68,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         $data = Minify_YUICompressor::minifyCss($data);
                         Varien_Profiler::stop('Minify_YUICompressor::minifyCss');
                         $YUICompressorFailed = false;
-                    } catch(Exception $e) {
+                    } catch (Exception $e) {
                         Mage::log(Minify_YUICompressor::$yuiCommand);
                         Mage::logException($e);
                         $YUICompressorFailed = true;
@@ -70,7 +80,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                     $data = Minify_Css_Compressor::process($data);
                     Varien_Profiler::stop('Minify_Css_Compressor::process');
                 }
-            break;
+                break;
 
             default:
                 return false;
@@ -78,49 +88,6 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
 
         return $data;
     }
-
-
-    /**
-     * PreCompile the files (less files for example) to CSS so the default
-     * minifier can handle the files. The file paths aren't expanded yet.
-     *
-     * @param string $data
-     * @param string $file
-     *
-     * @return string
-     */
-    public function preProcess($data, $file)
-    {
-        switch (pathinfo($file, PATHINFO_EXTENSION))
-        {
-            case 'less':
-                Varien_Profiler::start('lessc::compileFile');
-                $data = $this->_getLessphpModel()->compileFile($file);
-                Varien_Profiler::stop('lessc::compileFile');
-                return $data;
-            break;
-
-            default:
-                return $data;
-        }
-    }
-
-
-    /**
-     * Get the less compiler
-     *
-     * @return lessc
-     */
-    protected function _getLessphpModel()
-    {
-        if ($this->_lessphp === null)
-        {
-            require_once Mage::getBaseDir('lib').DS.'lessphp'.DS.'lessc.inc.php';
-            $this->_lessphp = new lessc();
-        }
-        return $this->_lessphp;
-    }
-
 
     /**
      *
@@ -145,7 +112,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
      * @return bool|string
      */
     public function mergeFiles(array $srcFiles, $targetFile = false, $mustMerge = false,
-            $beforeMergeCallback = null, $extensionsFilter = array())
+                               $beforeMergeCallback = null, $extensionsFilter = array())
     {
         try {
             // check whether merger is required
@@ -177,14 +144,13 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
 
                 // filter by extensions
                 if ($extensionsFilter) {
-                    if ($extensionsFilter == 'css')
-                    {
-                        $extensionsFilter = array('css','less');
+                    if ($extensionsFilter == 'css') {
+                        $extensionsFilter = array('css');
                     }
                     if (!is_array($extensionsFilter)) {
                         $extensionsFilter = array($extensionsFilter);
                     }
-                    if (!empty($srcFiles)){
+                    if (!empty($srcFiles)) {
                         foreach ($srcFiles as $key => $file) {
                             $fileExt = strtolower(pathinfo($file, PATHINFO_EXTENSION));
                             if (!in_array($fileExt, $extensionsFilter)) {
@@ -204,7 +170,6 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         continue;
                     }
                     $contents = file_get_contents($file) . "\n";
-                    $contents = $this->preProcess($contents, $file);
                     if ($beforeMergeCallback && is_callable($beforeMergeCallback)) {
                         $contents = call_user_func($beforeMergeCallback, $file, $contents);
                     }
