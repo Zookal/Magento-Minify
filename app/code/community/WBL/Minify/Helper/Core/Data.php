@@ -11,11 +11,6 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
     const XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR = 'dev/minification/enable_yuicompressor';
     const XML_PATH_MINIFY_VERSION_PATH         = 'dev/minification/version_config_path';
 
-    public function __construct()
-    {
-        $this->_initYUICompressor();
-    }
-
     /**
      * @return bool
      */
@@ -58,6 +53,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
      */
     public function minifyJsCss($data, $fileName)
     {
+        $this->_initYUICompressor();
         $YUICompressorFailed = false;
         switch (pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'js':
