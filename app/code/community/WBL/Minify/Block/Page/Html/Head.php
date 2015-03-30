@@ -1,11 +1,11 @@
 <?php
+
 /**
  * @category    WBL_Minify
  * @package     Minify
  * @copyright   Copyright (c)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
 class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
 {
 
@@ -187,8 +187,14 @@ class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
                     continue;
                 }
                 if (!empty($if)) {
-                    $html .= '<!--[if ' . $if . ']>' . "\n";
+                    // open !IE conditional using raw value
+                    if (strpos($if, "><!-->") !== false) {
+                        $html .= $if . "\n";
+                    } else {
+                        $html .= '<!--[if ' . $if . ']>' . "\n";
+                    }
                 }
+
                 // static and skin css
                 $html .= $this->_prepareStaticAndSkinElements('<link rel="stylesheet" type="text/css" href="%s"%s />' . "\n",
                     empty($items['js_css']) ? array() : $items['js_css'],
@@ -209,7 +215,12 @@ class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
                 }
 
                 if (!empty($if)) {
-                    $html .= '<![endif]-->' . "\n";
+                    // close !IE conditional comments correctly
+                    if (strpos($if, "><!-->") !== false) {
+                        $html .= '<!--<![endif]-->' . "\n";
+                    } else {
+                        $html .= '<![endif]-->' . "\n";
+                    }
                 }
             }
         }
