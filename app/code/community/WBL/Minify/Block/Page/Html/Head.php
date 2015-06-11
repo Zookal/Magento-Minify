@@ -93,14 +93,14 @@ class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
         if (($type === 'skin_css') && empty($params)) {
             $params = 'media="all"';
         }
-        $this->_data['items'][$type . '/' . $name] = array(
+        $this->_data['items'][$type . '/' . $name] = [
             'type'   => $type,
             'name'   => $name,
             'params' => $params,
             'if'     => (string)$if,
             'cond'   => (string)$cond,
             'group'  => (string)$group
-        );
+        ];
         return $this;
     }
 
@@ -155,7 +155,7 @@ class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
     public function getCssJsHtml()
     {
         // separate items by types
-        $lines = array();
+        $lines = [];
         foreach ($this->_data['items'] as $item) {
             if (!is_null($item['cond']) && !$this->getData($item['cond']) || !isset($item['name'])) {
                 continue;
@@ -197,16 +197,16 @@ class WBL_Minify_Block_Page_Html_Head extends Mage_Page_Block_Html_Head
 
                 // static and skin css
                 $html .= $this->_prepareStaticAndSkinElements('<link rel="stylesheet" type="text/css" href="%s"%s />' . "\n",
-                    empty($items['js_css']) ? array() : $items['js_css'],
-                    empty($items['skin_css']) ? array() : $items['skin_css'],
-                    $shouldMergeCss ? array(Mage::getDesign(), 'getMergedCssUrl') : null
+                    empty($items['js_css']) ? [] : $items['js_css'],
+                    empty($items['skin_css']) ? [] : $items['skin_css'],
+                    $shouldMergeCss ? [Mage::getDesign(), 'getMergedCssUrl'] : null
                 );
 
                 // static and skin javascripts
                 $html .= $this->_prepareStaticAndSkinElements('<script type="text/javascript" src="%s"%s></script>' . "\n",
-                    empty($items['js']) ? array() : $items['js'],
-                    empty($items['skin_js']) ? array() : $items['skin_js'],
-                    $shouldMergeJs ? array(Mage::getDesign(), 'getMergedJsUrl') : null
+                    empty($items['js']) ? [] : $items['js'],
+                    empty($items['skin_js']) ? [] : $items['skin_js'],
+                    $shouldMergeJs ? [Mage::getDesign(), 'getMergedJsUrl'] : null
                 );
 
                 // other stuff

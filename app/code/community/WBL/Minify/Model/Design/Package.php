@@ -93,7 +93,7 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
         $mergeFilesResult = $this->_mergeFiles(
             $files, $targetDir . DS . $targetFilename,
             false,
-            array($this, 'beforeMergeCss'),
+            [$this, 'beforeMergeCss'],
             'css'
         );
         if ($mergeFilesResult) {

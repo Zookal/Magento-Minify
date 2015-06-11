@@ -11,12 +11,26 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
     const XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR = 'dev/minification/enable_yuicompressor';
     const XML_PATH_MINIFY_VERSION_PATH         = 'dev/minification/version_config_path';
 
+    private $_logEnabled = false;
+
+    public function __construct()
+    {
+        $this->_logEnabled = Mage::getStoreConfigFlag('dev/minification/enable_log');
+    }
+
     /**
      * @return bool
      */
     public function isYUICompressEnabled()
     {
         return Mage::getStoreConfigFlag(self::XML_PATH_MINIFY_ENABLE_YUICOMPRESSOR);
+    }
+
+    public function logException(Exception $e)
+    {
+        if ($this->_logEnabled) {
+            Mage::logException($e);
+        }
     }
 
     /**
@@ -65,7 +79,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         $YUICompressorFailed = false;
                     } catch (Exception $e) {
                         Mage::log(Minify_YUICompressor::$yuiCommand);
-                        Mage::logException($e);
+                        $this->logException($e);
                         $YUICompressorFailed = true;
                     }
                 }
@@ -88,7 +102,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
                         $YUICompressorFailed = false;
                     } catch (Exception $e) {
                         Mage::log(Minify_YUICompressor::$yuiCommand);
-                        Mage::logException($e);
+                        $this->logException($e);
                         $YUICompressorFailed = true;
                     }
                 }
@@ -129,8 +143,13 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
      * @throws Exception
      * @return bool|string
      */
-    public function mergeFiles(array $srcFiles, $targetFile = false, $mustMerge = false,
-                               $beforeMergeCallback = null, $extensionsFilter = array())
+    public function mergeFiles(
+        array $srcFiles,
+        $targetFile = false,
+        $mustMerge = false,
+        $beforeMergeCallback = null,
+        $extensionsFilter = []
+    )
     {
         try {
             // check whether merger is required
@@ -163,10 +182,10 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
             // filter by extensions
             if ($extensionsFilter) {
                 if ($extensionsFilter == 'css') {
-                    $extensionsFilter = array('css');
+                    $extensionsFilter = ['css'];
                 }
                 if (!is_array($extensionsFilter)) {
-                    $extensionsFilter = array($extensionsFilter);
+                    $extensionsFilter = [$extensionsFilter];
                 }
                 if (!empty($srcFiles)) {
                     foreach ($srcFiles as $key => $file) {
@@ -209,7 +228,7 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
 
             return true; // no need in merger or merged into file successfully
         } catch (Exception $e) {
-            Mage::logException($e);
+            $this->logException($e);
         }
         return false;
     }
