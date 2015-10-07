@@ -15,14 +15,19 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
      * Also can clean it up
      *
      * @param string $dirRelativeName
-     * @param bool   $cleanup
+     * @param bool $cleanup
      *
      * @return bool
      */
     protected function _initMergerDir($dirRelativeName, $cleanup = false)
     {
         $version  = Mage::helper('core')->getStoreReleaseVersion(DS);
-        $mediaDir = Mage::getBaseDir('media');
+        $mediaDir = Mage::getBaseDir() . '/media/';
+        if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
+            $mediaDir = Mage::getBaseDir() . '/media';
+        } else {
+            $mediaDir = Mage::getBaseDir('media');
+        }
         try {
             $dir = $mediaDir . DS . $dirRelativeName . DS . $version;
             if ($cleanup) {
@@ -56,7 +61,11 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
             return '';
         }
         if ($this->_mergeFiles($files, $targetDir . DS . $targetFilename, false, null, 'js')) {
-            return Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) . 'js/' . $version . '/' . $targetFilename;
+            if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
+                return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, Mage::app()->getRequest()->isSecure()) . 'media/js/' . $version . '/' . $targetFilename;
+            } else {
+                return Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) . 'js/' . $version . '/' . $targetFilename;
+            }
         }
         return '';
     }
@@ -81,9 +90,13 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
         }
 
         // base hostname & port
-        $baseMediaUrl = Mage::getBaseUrl('media', $isSecure);
-        $hostname     = parse_url($baseMediaUrl, PHP_URL_HOST);
-        $port         = parse_url($baseMediaUrl, PHP_URL_PORT);
+        if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
+            $baseMediaUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, $isSecure) . 'media/';
+        } else {
+            $baseMediaUrl = Mage::getBaseUrl('media', $isSecure);
+        }
+        $hostname = parse_url($baseMediaUrl, PHP_URL_HOST);
+        $port     = parse_url($baseMediaUrl, PHP_URL_PORT);
         if (false === $port) {
             $port = $isSecure ? 443 : 80;
         }
