@@ -23,8 +23,8 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
     {
         $version  = Mage::helper('core')->getStoreReleaseVersion(DS);
         $mediaDir = Mage::getBaseDir() . '/media/';
-        if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
-            $mediaDir = Mage::getBaseDir() . '/media';
+        if (Mage::getStoreConfigFlag('dev/minification/force_default_media_path')) {
+            $mediaDir = Mage::getBaseDir() . DIRECTORY_SEPARATOR . 'media';
         } else {
             $mediaDir = Mage::getBaseDir('media');
         }
@@ -61,7 +61,7 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
             return '';
         }
         if ($this->_mergeFiles($files, $targetDir . DS . $targetFilename, false, null, 'js')) {
-            if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
+            if (Mage::getStoreConfigFlag('dev/minification/force_default_media_path')) {
                 return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, Mage::app()->getRequest()->isSecure()) . 'media/js/' . $version . '/' . $targetFilename;
             } else {
                 return Mage::getBaseUrl('media', Mage::app()->getRequest()->isSecure()) . 'js/' . $version . '/' . $targetFilename;
@@ -90,7 +90,7 @@ class WBL_Minify_Model_Design_Package extends Mage_Core_Model_Design_Package
         }
 
         // base hostname & port
-        if (Mage::getStoreConfig('dev/minification/force_default_media_path')) {
+        if (Mage::getStoreConfigFlag('dev/minification/force_default_media_path')) {
             $baseMediaUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB, $isSecure) . 'media/';
         } else {
             $baseMediaUrl = Mage::getBaseUrl('media', $isSecure);
