@@ -139,7 +139,7 @@ class Minify_YUICompressor
         exec(self::$yuiCommand, $output, $result_code);
         unlink($tmpFile);
         if ((int)$result_code !== 0) {
-            throw new Exception('Minify_YUICompressor : YUI compressor execution failed.');
+            throw new Exception('Minify_YUICompressor : YUI compressor execution failed.' . "\n" . 'result code: ' . $result_code . "\n" . 'Yui command: ' . self::$yuiCommand);
         }
         return implode("\n", $output);
     }
