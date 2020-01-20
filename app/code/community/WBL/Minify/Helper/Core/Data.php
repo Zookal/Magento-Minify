@@ -219,7 +219,9 @@ class WBL_Minify_Helper_Core_Data extends Mage_Core_Helper_Data
             if ($targetFile) {
 
                 //only the following line has been added for WBL_Minify
-                $data = $this->minifyJsCss($data, $targetFile);
+                if (Mage::getStoreConfigFlag('dev/minification/enable_minification')){
+                    $data = $this->minifyJsCss($data, $targetFile);
+                }
 
                 file_put_contents($targetFile, $data, LOCK_EX);
             } else {
